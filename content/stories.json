@@ -1,0 +1,81 @@
+{
+  "targets": [
+    {
+      "index": 0,
+      "id": "necklace",
+      "title": "The Maasai Beaded Necklace",
+      "summary": "Maasai beadwork is a living visual language, not just decoration: it communicates identity, status, history and pastoral values, and lets the community read a wearer's life stage, social standing and marital status.",
+      "details": [
+        "Before the 19th century, women used seeds, shells, clay, wood, bone and copper; glass seed beads from Bohemia were later integrated into the older geometric tradition.",
+        "During the colonial period, beadwork was intensified as an act of cultural resistance and pride.",
+        "Colours: red for bravery, strength and unity (cow's blood); white for peace, purity and health (milk); blue for energy, sky and rain; green for health, nourishment and grass; orange and yellow for hospitality and warmth; black for the people, shared identity and endurance.",
+        "Circular wedding collars (Enkarewa) echo the circular boma fence, signifying safety, home and community.",
+        "Milestones: unmarried girls wear a flat dancing disc; brides wear a heavy collar made by female relatives as a map of home; married women wear the Nborro blue-bead string.",
+        "Today beadwork reaches global runways and supports women's income through cooperatives such as Hadithi Crafts."
+      ],
+      "folklore": "The story is one of adaptation and resilience: natural materials gave way to traded glass beads, which Maasai women folded into their ancient geometric cosmology and later used to declare identity and resist assimilation.",
+      "verified": true,
+      "image": "/img/maasai-necklace.PNG"
+    },
+    {
+      "index": 1,
+      "id": "plant",
+      "title": "The Acacia Tree (Oltepes / Olkiloriti)",
+      "summary": "The acacia is the spiritual and physical anchor of Maasai life, revered as a sacred gift from Enkai for its strength, resilience and protection; the name Mara means spotted or dappled, describing the acacias across the plains.",
+      "details": [
+        "Known as Oltepes (umbrella thorn) or Olkiloriti (green thorn) in Maa.",
+        "Deep taproots reaching far underground teach perseverance through drought; historic acacias served as landmarks and living archives where elders met.",
+        "Protection: thorny branches form the boma fence against predators, and termite-resistant timber is used for homes and grain stores.",
+        "Sustenance: protein-rich seed pods feed livestock in dry seasons; the red inner bark of Acacia xanthophloea was boiled as a traditional tea.",
+        "Medicine and ritual: Olkiloriti (Acacia nilotica) bark and roots are boiled into broth or bone-marrow soup for Morans; sap treats wounds and twigs serve as natural toothbrushes."
+      ],
+      "folklore": "Oral history holds that when Enkai gave the Maasai their cattle, the acacia was given as a permanent guardian, a reminder that true strength grows in silence and stillness.",
+      "verified": true,
+      "image": "/img/acacia-tree.PNG"
+    },
+    {
+      "index": 2,
+      "id": "animal",
+      "title": "The Lion (Olng'atuny)",
+      "summary": "The lion is not simply a predator but the mirror of the Maasai warrior's soul, bound to the community through reverence, rivalry and now co-existence.",
+      "details": [
+        "Olamayio was a ritualised group hunt: warriors tracked on foot with a shield and a single spear, and hunting a lioness was forbidden unless she threatened livestock.",
+        "The warrior who landed the first spear blow earned a lifelong lion name and the lion's mane.",
+        "The mane became the Enkuwaru headdress, worn at ceremonies to show bravery and ferocity.",
+        "Lions learned to avoid Maasai territory and the red shuka; herders respond with strong bomas and vigilance.",
+        "Today the Maasai Olympics replace the hunt with javelin, Adumu jumping and running, and Lion Guardians use traditional tracking to protect lions, still giving them Maa names."
+      ],
+      "folklore": "Through Olamayio the Maasai did not conquer the lion out of hatred; they absorbed its essence, and modern guardianship continues that bond as a living part of Maasai identity.",
+      "verified": true,
+      "image": "/img/lion-image.PNG"
+    }
+  ],
+  "before": {
+    "greetings": [
+      {
+        "maa": "Supa",
+        "english": "Hello — reply Ipa (peers and equals)"
+      },
+      {
+        "maa": "Kejaa?",
+        "english": "How are things? — reply Sidai (good/fine)"
+      },
+      {
+        "maa": "Takwenya",
+        "english": "Greeting for one woman — reply Iko"
+      },
+      {
+        "maa": "Takwenyia",
+        "english": "Greeting for a group of women — reply Iko"
+      },
+      {
+        "maa": "Ero, supa elder / Taenyo",
+        "english": "Respectful greeting for male elders — reply Ipa or Naa"
+      }
+    ],
+    "etiquette": [
+      "Greetings depend on the age and gender of the person you are addressing; respect for elders and social standing is woven into the language.",
+      "A younger person often bows their head slightly when greeting elders, as a sign of humility and respect."
+    ]
+  }
+}
