@@ -14,11 +14,15 @@ function fakeStorage() {
   };
 }
 
-function setup() {
+function setup({ storedIds = [] } = {}) {
   document.body.innerHTML = '<div id="root"></div>';
   const root = document.getElementById("root");
   const stories = storyFixture();
-  const trip = createTrip(fakeStorage());
+  const storage = fakeStorage();
+  if (storedIds.length > 0) {
+    storage.setItem("olkinyi.trip.ids", JSON.stringify(storedIds));
+  }
+  const trip = createTrip(storage);
   const ask = vi.fn(async () => ({
     text: "Ask answer",
     storyId: "plant",
@@ -87,6 +91,72 @@ describe("mountApp screens", () => {
     expect(buttons).toHaveLength(3);
     expect(buttons[0].getAttribute("data-target")).toBe("0");
     expect(buttons[0].querySelector("img").getAttribute("src")).toBe(stories.targets[0].image);
+  });
+});
+
+describe("landing", () => {
+  it("renders the hero image, promise and scan CTA", () => {
+    const { root } = setup();
+    const before = root.querySelector('[data-screen="before"]');
+
+    expect(before.querySelector("[data-hero-image]").getAttribute("src")).toBe(
+      "/img/landing/hero-mara.jpg",
+    );
+    expect(before.textContent).toContain("Discover the story of the Maasai");
+    expect(before.textContent).toContain("Scan to enter the Mara");
+    expect(before.querySelector("[data-start]")).toBeTruthy();
+  });
+
+  it("shows the cultural value messages and photo credits", () => {
+    const { root } = setup();
+    const before = root.querySelector('[data-screen="before"]');
+
+    expect(before.textContent).toContain("A unique culture");
+    expect(before.textContent).toContain("Adumu jump");
+    expect(before.textContent).toContain("CC BY-SA 4.0");
+    expect(before.querySelector(".credits a").getAttribute("href")).toContain(
+      "commons.wikimedia.org",
+    );
+  });
+
+  it("links to the before-you-go guidance", () => {
+    const { root } = setup();
+    const link = root.querySelector("[data-before-link]");
+
+    expect(link.getAttribute("href")).toBe("#before-you-go");
+    expect(root.querySelector("#before-you-go").textContent).toContain("Greetings");
+  });
+
+  it("previews the three discoverable targets", () => {
+    const { root } = setup();
+    const previews = root.querySelectorAll("[data-preview-target]");
+
+    expect(previews).toHaveLength(3);
+    expect(previews[0].textContent).toContain("Necklace");
+    expect(previews[0].querySelector("img").getAttribute("src")).toBe(
+      "/img/landing/beadwork.jpg",
+    );
+    expect(previews[2].querySelector("img").getAttribute("src")).toBe(
+      "/img/landing/lion.jpg",
+    );
+  });
+
+  it("shows a continue CTA for a returning traveller", () => {
+    const { root } = setup({ storedIds: ["necklace", "plant"] });
+    const start = root.querySelector("[data-start]");
+
+    expect(start.textContent).toContain("Continue your journey");
+    expect(start.textContent).toContain("2 of 3");
+  });
+
+  it("labels the three steps Discover, Scan and Reflect", () => {
+    const { root } = setup();
+    const tabs = root.querySelectorAll("[data-tab]");
+
+    expect(tabs).toHaveLength(3);
+    expect(tabs[0].textContent).toContain("Discover");
+    expect(tabs[1].textContent).toContain("Scan");
+    expect(tabs[2].textContent).toContain("Reflect");
   });
 });
 
@@ -232,5 +302,51 @@ describe("camera error", () => {
     expect(error.hidden).toBe(false);
     expect(error.textContent).toContain("Camera unavailable");
     expect(root.querySelectorAll("[data-target]")).toHaveLength(3);
+  });
+});
+
+describe("scan guide", () => {
+  it("shows pointing instructions over the camera", () => {
+    const { root } = setup();
+    const guide = root.querySelector('[data-screen="explore"] [data-scan-guide]');
+
+    expect(guide).toBeTruthy();
+    expect(guide.textContent).toContain("Point at");
+    expect(guide.textContent).toContain("card");
+  });
+});
+
+describe("Scan tab", () => {
+  it("carries a dedicated, labelled icon badge", () => {
+    const { root } = setup();
+    const tab = root.querySelector('[data-tab="explore"]');
+
+    expect(tab.classList.contains("tab--scan")).toBe(true);
+    expect(tab.querySelector(".tab__scan-badge .tab__icon")).toBeTruthy();
+    expect(tab.querySelector(".tab__label").textContent).toBe("Scan");
+  });
+});
+
+describe("story reveal", () => {
+  it("opens full screen with the story image", () => {
+    const { root, stories, app } = setup();
+
+    app.onTargetFound(1);
+
+    const sheet = root.querySelector("[data-sheet]");
+    expect(sheet.classList.contains("sheet--reveal")).toBe(true);
+    expect(sheet.querySelector("[data-sheet-image]").getAttribute("src")).toBe(
+      stories.targets[1].image,
+    );
+  });
+
+  it("closes back to the scan guide", () => {
+    const { root, app } = setup();
+    app.onTargetFound(0);
+
+    root.querySelector("[data-sheet-close]").click();
+
+    expect(root.querySelector("[data-sheet]").hidden).toBe(true);
+    expect(root.querySelector('[data-screen="explore"] [data-scan-guide]')).toBeTruthy();
   });
 });

@@ -1,0 +1,21 @@
+Images in this folder are resized copies of Wikimedia Commons files.
+
+hero-mara.jpg
+  Source: https://commons.wikimedia.org/wiki/File:Maasai_Mara_landscape_beneath_clouds_and_sunbeams.jpg
+  Author: Daniel Case
+  License: CC BY-SA 4.0 - https://creativecommons.org/licenses/by-sa/4.0
+
+beadwork.jpg
+  Source: https://commons.wikimedia.org/wiki/File:Handmade_maasai_beadwork.jpg
+  Author: Cecilia Nkini
+  License: CC BY-SA 4.0 - https://creativecommons.org/licenses/by-sa/4.0
+
+savanna.jpg
+  Source: https://commons.wikimedia.org/wiki/File:Maasai_Mara_savanna_landscape,_Kenya.jpg
+  Author: Daniel Case
+  License: CC BY-SA 4.0 - https://creativecommons.org/licenses/by-sa/4.0
+
+lion.jpg
+  Source: https://commons.wikimedia.org/wiki/File:Male_lion_resting_Maasai_Mara_Kenya.jpg
+  Author: Smtunli
+  License: CC BY-SA 4.0 - https://creativecommons.org/licenses/by-sa/4.0

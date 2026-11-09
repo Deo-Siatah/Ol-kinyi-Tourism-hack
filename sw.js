@@ -10,11 +10,21 @@ const VENDOR_FILES = [
   "/vendor/ui-fBadYuor.js",
   "/vendor/three.module.min.js",
   "/vendor/addons/renderers/CSS3DRenderer.js",
+  "/vendor/fonts/fraunces-latin-600-normal.woff2",
+  "/vendor/fonts/fraunces-latin-700-normal.woff2",
+  "/vendor/fonts/inter-latin-400-normal.woff2",
+  "/vendor/fonts/inter-latin-600-normal.woff2",
+  "/vendor/fonts/inter-latin-700-normal.woff2",
+  "/img/landing/hero-mara.jpg",
+  "/img/landing/beadwork.jpg",
+  "/img/landing/savanna.jpg",
+  "/img/landing/lion.jpg",
 ];
 
 const APP_FILES = [
   "/src/app.js",
   "/src/ask.js",
+  "/src/icons.js",
   "/src/offline.js",
   "/src/overlay.js",
   "/src/scan.js",

@@ -1,24 +1,84 @@
 // Mounts the Before, Explore and After screens and their interactions.
 
 import { getStoryByIndex } from "./stories.js";
+import { icon } from "./icons.js";
+
+const PREVIEW_ICONS = {
+  necklace: "gem",
+  plant: "leaf",
+  animal: "paw",
+};
+
+const PREVIEW_IMAGES = {
+  necklace: "/img/landing/beadwork.jpg",
+  plant: "/img/landing/savanna.jpg",
+  animal: "/img/landing/lion.jpg",
+};
 
 export function mountApp(root, { stories, trip, ask, narrator }) {
   root.innerHTML = `
     <div class="app">
       <main class="screens">
         <section class="screen screen--before" data-screen="before">
-          <p class="eyebrow">Maasai Mara</p>
-          <h1 class="hero-title">Welcome to Ol-Kinyi</h1>
-          <p class="lede">Point your phone at a bead, a plant or an animal to hear its story.</p>
-          <section class="panel">
-            <h2>Greetings</h2>
-            <ul class="greetings" data-greetings></ul>
-          </section>
-          <section class="panel">
-            <h2>Etiquette</h2>
-            <ul class="etiquette" data-etiquette></ul>
-          </section>
-          <button class="btn btn--accent" type="button" data-start>Start exploring</button>
+          <header class="landing-hero">
+            <img class="landing-hero__image" data-hero-image src="/img/landing/hero-mara.jpg" alt="Sunbeams breaking through clouds over the Maasai Mara plains" />
+            <div class="landing-hero__scrim" aria-hidden="true"></div>
+            <div class="landing-hero__content">
+              <p class="eyebrow">Ol-Kinyi · Maasai Mara</p>
+              <h1 class="hero-title">Discover the story of the Maasai</h1>
+              <p class="lede">A unique culture to appreciate. Scan a bead, a tree or a lion, and let the Mara speak.</p>
+              <button class="btn btn--accent" type="button" data-start>Scan to enter the Mara</button>
+              <a class="btn btn--ghost" href="#before-you-go" data-before-link>Before you go</a>
+            </div>
+          </header>
+          <div class="landing-body">
+            <section class="values" aria-label="Why Ol-Kinyi">
+              <article class="value">
+                <span class="value__icon">${icon("sparkles")}</span>
+                <div>
+                  <h2>Discover the story</h2>
+                  <p>Every bead, tree and lion opens a story worth hearing.</p>
+                </div>
+              </article>
+              <article class="value">
+                <span class="value__icon">${icon("compass")}</span>
+                <div>
+                  <h2>A unique culture</h2>
+                  <p>Learn the greetings and etiquette that make a visit respectful.</p>
+                </div>
+              </article>
+              <article class="value">
+                <span class="value__icon">${icon("paw")}</span>
+                <div>
+                  <h2>Appreciate the jump</h2>
+                  <p>Meet the Adumu jump in the story of the lion and the Maasai Olympics.</p>
+                </div>
+              </article>
+            </section>
+            <section class="discover">
+              <div class="section-head">
+                <h2 class="section-title">What you will discover</h2>
+                <span class="section-kicker">${stories.targets.length} stories</span>
+              </div>
+              <div class="preview-grid" data-preview></div>
+            </section>
+            <section class="panel" id="before-you-go">
+              <h2 class="panel-title">${icon("volume")} Greetings</h2>
+              <ul class="greetings" data-greetings></ul>
+            </section>
+            <section class="panel">
+              <h2 class="panel-title">${icon("sparkles")} Etiquette</h2>
+              <ul class="etiquette" data-etiquette></ul>
+            </section>
+            <p class="credits">
+              Photos:
+              <a href="https://commons.wikimedia.org/wiki/File:Maasai_Mara_landscape_beneath_clouds_and_sunbeams.jpg">Daniel Case</a>,
+              <a href="https://commons.wikimedia.org/wiki/File:Handmade_maasai_beadwork.jpg">Cecilia Nkini</a>,
+              <a href="https://commons.wikimedia.org/wiki/File:Maasai_Mara_savanna_landscape%2C_Kenya.jpg">Daniel Case</a>,
+              <a href="https://commons.wikimedia.org/wiki/File:Male_lion_resting_Maasai_Mara_Kenya.jpg">Smtunli</a>
+              · CC BY-SA 4.0 via Wikimedia Commons
+            </p>
+          </div>
         </section>
 
         <section class="screen screen--explore" data-screen="explore" hidden>
@@ -26,10 +86,15 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
             <video class="camera-video" data-camera-video playsinline muted autoplay></video>
             <div class="camera-error" data-camera-error hidden></div>
           </div>
+          <div class="scan-guide" data-scan-guide>
+            <div class="reticle" aria-hidden="true"></div>
+            <p class="scan-guide__text">Point at the necklace, plant or animal card</p>
+          </div>
           <div class="target-dock">
             <div class="targets" data-targets></div>
           </div>
-          <div class="sheet" data-sheet hidden>
+          <div class="sheet sheet--reveal" data-sheet hidden>
+            <img class="sheet__image" data-sheet-image alt="" />
             <button class="sheet__close" type="button" data-sheet-close aria-label="Close story">Close</button>
             <div class="sheet__head">
               <h2 data-sheet-title></h2>
@@ -55,10 +120,16 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
         </section>
       </main>
 
-      <nav class="tabbar" aria-label="Sections">
-        <button class="tab" type="button" data-tab="before" aria-selected="true">Before</button>
-        <button class="tab" type="button" data-tab="explore" aria-selected="false">Explore</button>
-        <button class="tab" type="button" data-tab="after" aria-selected="false">After</button>
+      <nav class="tabbar" aria-label="Journey steps">
+        <button class="tab" type="button" data-tab="before" aria-selected="true">
+          ${icon("compass", "tab__icon")}<span class="tab__label">Discover</span>
+        </button>
+        <button class="tab tab--scan" type="button" data-tab="explore" aria-selected="false">
+          <span class="tab__scan-badge">${icon("scan", "tab__icon")}</span><span class="tab__label">Scan</span>
+        </button>
+        <button class="tab" type="button" data-tab="after" aria-selected="false">
+          ${icon("book", "tab__icon")}<span class="tab__label">Reflect</span>
+        </button>
       </nav>
     </div>
   `;
@@ -66,6 +137,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
   const screens = root.querySelectorAll("[data-screen]");
   const tabs = root.querySelectorAll("[data-tab]");
   const sheet = root.querySelector("[data-sheet]");
+  const sheetImage = root.querySelector("[data-sheet-image]");
   const sheetTitle = root.querySelector("[data-sheet-title]");
   const sheetSummary = root.querySelector("[data-sheet-summary]");
   const sheetDetails = root.querySelector("[data-sheet-details]");
@@ -112,6 +184,34 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
     }
   }
 
+  function renderPreview() {
+    const container = root.querySelector("[data-preview]");
+    for (const story of stories.targets) {
+      const card = document.createElement("article");
+      card.className = "preview";
+      card.dataset.previewTarget = String(story.index);
+      const img = document.createElement("img");
+      img.src = PREVIEW_IMAGES[story.id] ?? story.image;
+      img.alt = "";
+      const iconWrap = document.createElement("span");
+      iconWrap.className = "preview__icon";
+      iconWrap.innerHTML = icon(PREVIEW_ICONS[story.id] ?? "sparkles");
+      const title = document.createElement("h3");
+      title.textContent = story.title;
+      card.append(img, iconWrap, title);
+      container.appendChild(card);
+    }
+  }
+
+  function renderStart() {
+    const visited = trip.list();
+    if (visited.length === 0) {
+      return;
+    }
+    root.querySelector("[data-start]").textContent =
+      `Continue your journey · ${visited.length} of ${stories.targets.length}`;
+  }
+
   function renderTargets() {
     const container = root.querySelector("[data-targets]");
     for (const story of stories.targets) {
@@ -136,6 +236,8 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
     listenButton.disabled = false;
     listenStatus.hidden = true;
     listenStatus.textContent = "";
+    sheetImage.src = story.image;
+    sheetImage.alt = story.title;
     sheetTitle.textContent = story.title;
     sheetSummary.textContent = story.summary;
     sheetDetails.replaceChildren(
@@ -248,6 +350,8 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
 
   renderGreetings();
   renderEtiquette();
+  renderPreview();
+  renderStart();
   renderTargets();
   renderAfter();
   showScreen("before");
