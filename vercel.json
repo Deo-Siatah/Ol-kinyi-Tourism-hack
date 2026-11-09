@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "echo static",
+  "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
+}
