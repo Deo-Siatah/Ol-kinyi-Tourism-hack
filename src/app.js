@@ -21,7 +21,18 @@ const PREVIEW_IMAGES = {
   manyatta: "/img/manyatta-home.PNG",
 };
 
-export function mountApp(root, { stories, trip, ask, narrator, visualize, visualizeSvg }) {
+export function mountApp(
+  root,
+  {
+    stories,
+    trip,
+    ask,
+    narrator,
+    scanner = { start: async () => true, stop: () => {} },
+    visualize,
+    visualizeSvg,
+  },
+) {
   const hasVisualize = Boolean(visualize && visualizeSvg);
   const visualizeTab = hasVisualize
     ? `<button class="tab" type="button" data-tab="visualize" aria-selected="false">
@@ -113,14 +124,16 @@ export function mountApp(root, { stories, trip, ask, narrator, visualize, visual
           </div>
         </section>
 
-        <section class="screen screen--explore" data-screen="explore" hidden>
+        <section class="screen screen--explore" data-screen="explore" data-scanning="false" hidden>
           <div class="camera-view" data-camera-view>
-            <video class="camera-video" data-camera-video playsinline muted autoplay></video>
+            <video class="camera-video" data-camera-video playsinline muted autoplay hidden></video>
+            <div class="ar-layer" data-ar-view></div>
             <div class="camera-error" data-camera-error hidden></div>
           </div>
           <div class="scan-guide" data-scan-guide>
             <div class="reticle" aria-hidden="true"></div>
             <p class="scan-guide__text">Point at the necklace, plant, animal, shuka or manyatta card</p>
+            <button class="btn btn--ghost scan-toggle" type="button" data-scan-toggle aria-pressed="false">Start scanning</button>
           </div>
           <div class="target-dock">
             <div class="targets" data-targets></div>
@@ -194,9 +207,52 @@ export function mountApp(root, { stories, trip, ask, narrator, visualize, visual
   const cutaway = root.querySelector("[data-cutaway]");
   const sectionPanelTitle = root.querySelector("[data-section-title]");
   const sectionPanelText = root.querySelector("[data-section-text]");
+  const exploreScreen = root.querySelector('[data-screen="explore"]');
+  const scanToggle = root.querySelector("[data-scan-toggle]");
   let currentStory = null;
+  let currentScreen = null;
+  let scanActive = false;
+  let scanRequest = 0;
+
+  function setScanActive(active) {
+    scanActive = active;
+    exploreScreen.dataset.scanning = String(active);
+    scanToggle.setAttribute("aria-pressed", String(active));
+    scanToggle.textContent = active ? "Pause scan" : "Start scanning";
+  }
+
+  async function startScan() {
+    const request = ++scanRequest;
+    setScanActive(true);
+    let started = true;
+    try {
+      started = (await scanner.start()) !== false;
+    } catch {
+      started = false;
+    }
+    if (request === scanRequest) {
+      setScanActive(started);
+    }
+  }
+
+  function stopScan() {
+    scanRequest += 1;
+    setScanActive(false);
+    scanner.stop();
+  }
 
   function showScreen(name) {
+    const previous = currentScreen;
+    currentScreen = name;
+    if (name === "explore") {
+      closeSheet();
+      startScan();
+    } else {
+      if (scanActive || previous === "explore") {
+        stopScan();
+      }
+      closeSheet();
+    }
     screens.forEach((screen) => {
       screen.hidden = screen.dataset.screen !== name;
     });
@@ -403,6 +459,7 @@ export function mountApp(root, { stories, trip, ask, narrator, visualize, visual
       showScreen("visualize");
       return story;
     }
+    stopScan();
     trip.add(story.id);
     openSheet(story);
     renderAfter();
@@ -419,6 +476,13 @@ export function mountApp(root, { stories, trip, ask, narrator, visualize, visual
       narrator.stop();
       showScreen(tab.dataset.tab);
     });
+  });
+  scanToggle.addEventListener("click", () => {
+    if (scanActive) {
+      stopScan();
+    } else {
+      startScan();
+    }
   });
   root.querySelector("[data-start]").addEventListener("click", () => showScreen("explore"));
   root.querySelector("[data-sheet-close]").addEventListener("click", () => {
@@ -457,5 +521,5 @@ export function mountApp(root, { stories, trip, ask, narrator, visualize, visual
   renderVisualize();
   showScreen("before");
 
-  return { onTargetFound, showCameraError };
+  return { onTargetFound, showCameraError, stopScan };
 }

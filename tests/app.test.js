@@ -36,6 +36,10 @@ function setup({ storedIds = [], withVisualize = false } = {}) {
     play: vi.fn(async () => "speech"),
     stop: vi.fn(),
   };
+  const scanner = {
+    start: vi.fn(async () => true),
+    stop: vi.fn(),
+  };
   const visualize = withVisualize ? visualizeFixture() : undefined;
   const visualizeSvg = withVisualize ? visualizeSvgFixture() : undefined;
   const app = mountApp(root, {
@@ -43,10 +47,11 @@ function setup({ storedIds = [], withVisualize = false } = {}) {
     trip,
     ask,
     narrator,
+    scanner,
     visualize,
     visualizeSvg,
   });
-  return { root, stories, trip, ask, narrator, visualize, app };
+  return { root, stories, trip, ask, narrator, scanner, visualize, app };
 }
 
 function flush() {
@@ -172,6 +177,119 @@ describe("landing", () => {
     expect(tabs[0].textContent).toContain("Discover");
     expect(tabs[1].textContent).toContain("Scan");
     expect(tabs[2].textContent).toContain("Reflect");
+  });
+});
+
+describe("scan lifecycle", () => {
+  it("starts scanning from the landing button and the Scan tab", async () => {
+    const { root, scanner } = setup();
+    const explore = root.querySelector('[data-screen="explore"]');
+
+    expect(explore.dataset.scanning).toBe("false");
+
+    root.querySelector("[data-start]").click();
+    await flush();
+
+    expect(scanner.start).toHaveBeenCalledTimes(1);
+    expect(explore.dataset.scanning).toBe("true");
+
+    root.querySelector('[data-tab="explore"]').click();
+    await flush();
+
+    expect(scanner.start).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops scanning and closes the sheet when leaving Explore", async () => {
+    const { root, scanner, app } = setup();
+    const explore = root.querySelector('[data-screen="explore"]');
+
+    root.querySelector("[data-start]").click();
+    await flush();
+    app.onTargetFound(0);
+    scanner.stop.mockClear();
+
+    root.querySelector('[data-tab="after"]').click();
+
+    expect(scanner.stop).toHaveBeenCalledTimes(1);
+    expect(explore.dataset.scanning).toBe("false");
+    expect(root.querySelector("[data-sheet]").hidden).toBe(true);
+  });
+
+  it("pauses and restarts from the scan toggle", async () => {
+    const { root, scanner } = setup();
+
+    root.querySelector("[data-start]").click();
+    await flush();
+
+    const toggle = root.querySelector("[data-scan-toggle]");
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle.textContent).toContain("Pause scan");
+
+    toggle.click();
+
+    expect(scanner.stop).toHaveBeenCalledTimes(1);
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(toggle.textContent).toContain("Start scanning");
+
+    toggle.click();
+    await flush();
+
+    expect(scanner.start).toHaveBeenCalledTimes(2);
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("stops scanning before opening a found story", async () => {
+    const { root, scanner, app } = setup();
+
+    root.querySelector("[data-start]").click();
+    await flush();
+    scanner.stop.mockClear();
+
+    app.onTargetFound(0);
+
+    expect(scanner.stop).toHaveBeenCalledTimes(1);
+    expect(root.querySelector('[data-screen="explore"]').dataset.scanning).toBe("false");
+    expect(root.querySelector("[data-sheet]").hidden).toBe(false);
+  });
+
+  it("does not restart scanning when the story sheet closes", async () => {
+    const { root, scanner, app } = setup();
+
+    root.querySelector("[data-start]").click();
+    await flush();
+    app.onTargetFound(0);
+    scanner.start.mockClear();
+
+    root.querySelector("[data-sheet-close]").click();
+    await flush();
+
+    expect(scanner.start).not.toHaveBeenCalled();
+  });
+
+  it("stays paused when the camera cannot start", async () => {
+    const { root, scanner } = setup();
+    scanner.start.mockResolvedValue(false);
+
+    root.querySelector("[data-start]").click();
+    await flush();
+
+    const toggle = root.querySelector("[data-scan-toggle]");
+    expect(root.querySelector('[data-screen="explore"]').dataset.scanning).toBe("false");
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(toggle.textContent).toContain("Start scanning");
+  });
+
+  it("stops scanning when switching to Visualize", async () => {
+    const { root, scanner } = setup({ withVisualize: true });
+
+    root.querySelector("[data-start]").click();
+    await flush();
+    scanner.stop.mockClear();
+
+    root.querySelector('[data-tab="visualize"]').click();
+
+    expect(scanner.stop).toHaveBeenCalledTimes(1);
+    expect(root.querySelector('[data-screen="explore"]').dataset.scanning).toBe("false");
   });
 });
 

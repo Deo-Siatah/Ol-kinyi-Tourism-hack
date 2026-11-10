@@ -46,48 +46,146 @@ function askFromServer(question, stories) {
   return ask(question, stories, { fetchFn: window.fetch.bind(window) });
 }
 
-async function startCameraPreview(showCameraError) {
+function createScanSession({ stories, app }) {
+  const container = document.querySelector("[data-ar-view]");
   const video = document.querySelector("[data-camera-video]");
-  if (!navigator.mediaDevices?.getUserMedia) {
-    showCameraError("Camera is not available. Tap a card to explore instead.");
-    return;
-  }
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: "environment" } },
-      audio: false,
-    });
-    video.hidden = false;
-    video.srcObject = stream;
-    await video.play();
-  } catch {
-    showCameraError("Camera was blocked. Tap a card to explore instead.");
-  }
-}
+  let mindarThree = null;
+  let previewStream = null;
+  let session = 0;
+  let pending = null;
+  let running = false;
 
-async function startAR(stories, app) {
-  if (!window.isSecureContext) {
-    app.showCameraError("Camera needs HTTPS. Tap a card to explore instead.");
-    return;
+  function stopInstance(instance) {
+    instance.renderer.setAnimationLoop(null);
+    const stream = instance.video?.srcObject;
+    try {
+      instance.stop();
+    } catch {
+      // MindAR may fail to stop before its controller is ready.
+    }
+    if (stream?.getTracks) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    container.replaceChildren();
   }
-  try {
-    const container = document.querySelector("[data-camera-view]");
-    document.querySelector("[data-camera-video]").hidden = true;
-    const mindarThree = new MindARThree({
+
+  function clear() {
+    if (mindarThree) {
+      stopInstance(mindarThree);
+      mindarThree = null;
+    } else {
+      container.replaceChildren();
+    }
+    if (previewStream) {
+      previewStream.getTracks().forEach((track) => track.stop());
+      previewStream = null;
+    }
+    video.srcObject = null;
+    video.hidden = true;
+  }
+
+  function stop() {
+    session += 1;
+    running = false;
+    clear();
+  }
+
+  async function startPreview() {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      app.showCameraError("Camera is not available. Tap a card to explore instead.");
+      return false;
+    }
+    try {
+      previewStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+      video.hidden = false;
+      video.srcObject = previewStream;
+      await video.play();
+      return true;
+    } catch {
+      if (previewStream) {
+        previewStream.getTracks().forEach((track) => track.stop());
+        previewStream = null;
+      }
+      video.srcObject = null;
+      video.hidden = true;
+      app.showCameraError("Camera was blocked. Tap a card to explore instead.");
+      return false;
+    }
+  }
+
+  async function begin() {
+    const request = ++session;
+    if (!window.isSecureContext) {
+      app.showCameraError("Camera needs HTTPS. Tap a card to explore instead.");
+      return false;
+    }
+    clear();
+    const instance = new MindARThree({
       container,
       imageTargetSrc: "/targets.mind",
+      uiLoading: "no",
+      uiScanning: "no",
+      uiError: "no",
     });
-    const { renderer, scene, camera } = mindarThree;
+    mindarThree = instance;
+    const { renderer, scene, camera } = instance;
     for (const story of stories.targets) {
-      const anchor = mindarThree.addAnchor(story.index);
-      anchor.onTargetFound = () => app.onTargetFound(story.index);
+      const anchor = instance.addAnchor(story.index);
+      anchor.onTargetFound = () => {
+        if (request === session) {
+          app.onTargetFound(story.index);
+        }
+      };
     }
-    await mindarThree.start();
-    renderer.setAnimationLoop(() => renderer.render(scene, camera));
-  } catch {
-    app.showCameraError("Augmented reality could not start. Tap a card to explore instead.");
-    await startCameraPreview(app.showCameraError);
+    try {
+      await instance.start();
+      if (request !== session) {
+        stopInstance(instance);
+        if (mindarThree === instance) {
+          mindarThree = null;
+        }
+        return false;
+      }
+      renderer.setAnimationLoop(() => renderer.render(scene, camera));
+      running = true;
+      return true;
+    } catch {
+      if (request !== session) {
+        stopInstance(instance);
+        if (mindarThree === instance) {
+          mindarThree = null;
+        }
+        return false;
+      }
+      stopInstance(instance);
+      mindarThree = null;
+      app.showCameraError("Augmented reality could not start. Tap a card to explore instead.");
+      running = await startPreview();
+      if (request !== session) {
+        clear();
+        running = false;
+        return false;
+      }
+      return running;
+    }
   }
+
+  function start() {
+    if (running) {
+      return Promise.resolve(true);
+    }
+    if (!pending) {
+      pending = begin().finally(() => {
+        pending = null;
+      });
+    }
+    return pending;
+  }
+
+  return { start, stop };
 }
 
 async function bootstrap() {
@@ -100,20 +198,31 @@ async function bootstrap() {
     synth: createSpeechSynth(),
     lang: "en",
   });
+  let session = null;
+  const scanner = {
+    start: () => session.start(),
+    stop: () => session.stop(),
+  };
   const app = mountApp(root, {
     stories,
     trip,
     ask: askFromServer,
     narrator,
+    scanner,
     visualize: visualize?.data,
     visualizeSvg: visualize?.svg,
   });
+  session = createScanSession({ stories, app });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      app.stopScan();
+    }
+  });
+  window.addEventListener("pagehide", () => app.stopScan());
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js", { type: "module" }).catch(() => {});
   }
-
-  await startAR(stories, app);
 }
 
 bootstrap().catch((error) => {

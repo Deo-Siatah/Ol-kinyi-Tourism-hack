@@ -2,7 +2,7 @@
 
 import { buildPrecacheList, cacheFirst } from "./src/offline.js";
 
-const CACHE_NAME = "olkinyi-v6";
+const CACHE_NAME = "olkinyi-v7";
 
 const VENDOR_FILES = [
   "/vendor/mindar-image-three.prod.js",

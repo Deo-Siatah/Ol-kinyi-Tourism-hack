@@ -488,7 +488,14 @@
         background: var(--deep);
       }
 
+      .ar-layer {
+        position: absolute;
+        inset: 0;
+      }
+
       .camera-video {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -541,6 +548,17 @@
         font-weight: 700;
         line-height: 1.3;
         text-align: center;
+      }
+
+      .scan-toggle {
+        width: auto;
+        min-height: 44px;
+        padding: 0 20px;
+        pointer-events: auto;
+      }
+
+      .screen--explore[data-scanning="false"] .reticle {
+        display: none;
       }
 
       .camera-error {
