@@ -1,21 +1,53 @@
-// Mounts the Before, Explore and After screens and their interactions.
+// Mounts the app screens and their interactions.
 
 import { getStoryByIndex } from "./stories.js";
 import { icon } from "./icons.js";
+import { renderHighlights } from "./highlights.js";
+import { getSection } from "./visualize.js";
 
 const PREVIEW_ICONS = {
   necklace: "gem",
   plant: "leaf",
   animal: "paw",
+  shuka: "shirt",
+  manyatta: "hut",
 };
 
 const PREVIEW_IMAGES = {
   necklace: "/img/landing/beadwork.jpg",
   plant: "/img/landing/savanna.jpg",
   animal: "/img/landing/lion.jpg",
+  shuka: "/img/maasai-shuka.PNG",
+  manyatta: "/img/manyatta-home.PNG",
 };
 
-export function mountApp(root, { stories, trip, ask, narrator }) {
+export function mountApp(root, { stories, trip, ask, narrator, visualize, visualizeSvg }) {
+  const hasVisualize = Boolean(visualize && visualizeSvg);
+  const visualizeTab = hasVisualize
+    ? `<button class="tab" type="button" data-tab="visualize" aria-selected="false">
+          ${icon("hut", "tab__icon")}<span class="tab__label">Visualize</span>
+        </button>`
+    : "";
+  const visualizeScreen = hasVisualize
+    ? `<section class="screen screen--visualize" data-screen="visualize" hidden>
+          <header class="visualize-head">
+            <p class="eyebrow">Ol-Kinyi · Visualize</p>
+            <h1 class="visualize-title" data-visualize-title></h1>
+            <p class="lede" data-visualize-summary></p>
+            <span class="badge" data-visualize-badge hidden>Illustrative</span>
+          </header>
+          <div class="visualize-card">
+            <div class="cutaway" data-cutaway></div>
+          </div>
+          <div class="section-chips" data-section-chips></div>
+          <div class="panel section-panel" data-section-panel>
+            <h2 class="panel-title" data-section-title></h2>
+            <p class="section-text" data-section-text></p>
+          </div>
+          <button class="btn btn--accent" type="button" data-expand aria-pressed="false">Expand</button>
+        </section>`
+    : "";
+
   root.innerHTML = `
     <div class="app">
       <main class="screens">
@@ -26,7 +58,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
             <div class="landing-hero__content">
               <p class="eyebrow">Ol-Kinyi · Maasai Mara</p>
               <h1 class="hero-title">Discover the story of the Maasai</h1>
-              <p class="lede">A unique culture to appreciate. Scan a bead, a tree or a lion, and let the Mara speak.</p>
+              <p class="lede">A unique culture to appreciate. Scan a bead, a tree, a lion or a shuka, and step inside a manyatta.</p>
               <button class="btn btn--accent" type="button" data-start>Scan to enter the Mara</button>
               <a class="btn btn--ghost" href="#before-you-go" data-before-link>Before you go</a>
             </div>
@@ -88,7 +120,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
           </div>
           <div class="scan-guide" data-scan-guide>
             <div class="reticle" aria-hidden="true"></div>
-            <p class="scan-guide__text">Point at the necklace, plant or animal card</p>
+            <p class="scan-guide__text">Point at the necklace, plant, animal, shuka or manyatta card</p>
           </div>
           <div class="target-dock">
             <div class="targets" data-targets></div>
@@ -101,6 +133,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
               <span class="badge" data-sheet-badge hidden></span>
             </div>
             <p class="sheet__summary" data-sheet-summary></p>
+            <div class="highlights" data-sheet-highlights></div>
             <ul class="sheet__details" data-sheet-details></ul>
             <p class="sheet__folklore" data-sheet-folklore></p>
             <button class="btn btn--accent" type="button" data-listen disabled>Listen</button>
@@ -112,6 +145,8 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
             <p class="ask__answer" data-answer></p>
           </div>
         </section>
+
+        ${visualizeScreen}
 
         <section class="screen screen--after" data-screen="after" hidden>
           <h1>Your trip</h1>
@@ -127,6 +162,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
         <button class="tab tab--scan" type="button" data-tab="explore" aria-selected="false">
           <span class="tab__scan-badge">${icon("scan", "tab__icon")}</span><span class="tab__label">Scan</span>
         </button>
+        ${visualizeTab}
         <button class="tab" type="button" data-tab="after" aria-selected="false">
           ${icon("book", "tab__icon")}<span class="tab__label">Reflect</span>
         </button>
@@ -140,6 +176,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
   const sheetImage = root.querySelector("[data-sheet-image]");
   const sheetTitle = root.querySelector("[data-sheet-title]");
   const sheetSummary = root.querySelector("[data-sheet-summary]");
+  const sheetHighlights = root.querySelector("[data-sheet-highlights]");
   const sheetDetails = root.querySelector("[data-sheet-details]");
   const sheetFolklore = root.querySelector("[data-sheet-folklore]");
   const sheetBadge = root.querySelector("[data-sheet-badge]");
@@ -151,6 +188,12 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
   const cameraError = root.querySelector("[data-camera-error]");
   const listenButton = root.querySelector("[data-listen]");
   const listenStatus = root.querySelector("[data-listen-status]");
+  const visualizeTitle = root.querySelector("[data-visualize-title]");
+  const visualizeSummary = root.querySelector("[data-visualize-summary]");
+  const visualizeBadge = root.querySelector("[data-visualize-badge]");
+  const cutaway = root.querySelector("[data-cutaway]");
+  const sectionPanelTitle = root.querySelector("[data-section-title]");
+  const sectionPanelText = root.querySelector("[data-section-text]");
   let currentStory = null;
 
   function showScreen(name) {
@@ -160,6 +203,55 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
     tabs.forEach((tab) => {
       tab.setAttribute("aria-selected", String(tab.dataset.tab === name));
     });
+  }
+
+  function selectSection(id) {
+    if (!hasVisualize) {
+      return null;
+    }
+    const section = getSection(visualize, id);
+    if (!section) {
+      return null;
+    }
+    root.querySelectorAll("[data-section-chip]").forEach((chip) => {
+      chip.classList.toggle("is-active", chip.dataset.sectionChip === section.id);
+    });
+    cutaway.querySelectorAll("[data-section]").forEach((part) => {
+      part.classList.toggle("is-active", part.dataset.section === section.id);
+    });
+    sectionPanelTitle.textContent = section.title;
+    sectionPanelText.textContent = section.text;
+    visualizeBadge.hidden = section.verified;
+    return section;
+  }
+
+  function renderVisualize() {
+    if (!hasVisualize) {
+      return;
+    }
+    visualizeTitle.textContent = visualize.title;
+    visualizeSummary.textContent = visualize.summary;
+    cutaway.innerHTML = visualizeSvg;
+    const chips = root.querySelector("[data-section-chips]");
+    for (const section of visualize.sections) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "section-chip";
+      chip.dataset.sectionChip = section.id;
+      chip.textContent = section.label;
+      chip.addEventListener("click", () => selectSection(section.id));
+      chips.appendChild(chip);
+    }
+    cutaway.querySelectorAll("[data-section]").forEach((part) => {
+      part.addEventListener("click", () => selectSection(part.dataset.section));
+    });
+    const expand = root.querySelector("[data-expand]");
+    expand.addEventListener("click", () => {
+      const next = expand.getAttribute("aria-pressed") !== "true";
+      expand.setAttribute("aria-pressed", String(next));
+      cutaway.classList.toggle("is-expanded", next);
+    });
+    selectSection(visualize.sections[0].id);
   }
 
   function renderGreetings() {
@@ -240,6 +332,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
     sheetImage.alt = story.title;
     sheetTitle.textContent = story.title;
     sheetSummary.textContent = story.summary;
+    sheetHighlights.innerHTML = renderHighlights(story);
     sheetDetails.replaceChildren(
       ...story.details.map((detail) => {
         const item = document.createElement("li");
@@ -303,6 +396,13 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
     if (!story) {
       return null;
     }
+    if (index === 4 && hasVisualize) {
+      closeSheet();
+      trip.add(story.id);
+      renderAfter();
+      showScreen("visualize");
+      return story;
+    }
     trip.add(story.id);
     openSheet(story);
     renderAfter();
@@ -354,6 +454,7 @@ export function mountApp(root, { stories, trip, ask, narrator }) {
   renderStart();
   renderTargets();
   renderAfter();
+  renderVisualize();
   showScreen("before");
 
   return { onTargetFound, showCameraError };

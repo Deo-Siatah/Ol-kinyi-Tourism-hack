@@ -41,6 +41,13 @@ describe("buildPrecacheList", () => {
     }
   });
 
+  it("includes the Visualize content files", () => {
+    const list = buildPrecacheList(storyFixture());
+
+    expect(list).toContain("/content/visualize.json");
+    expect(list).toContain("/content/visualize.svg");
+  });
+
   it("includes every target image as an absolute path", () => {
     const list = buildPrecacheList(storyFixture());
 

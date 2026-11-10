@@ -15,7 +15,22 @@
       ],
       "folklore": "The story is one of adaptation and resilience: natural materials gave way to traded glass beads, which Maasai women folded into their ancient geometric cosmology and later used to declare identity and resist assimilation.",
       "verified": true,
-      "image": "/img/maasai-necklace.PNG"
+      "image": "/img/maasai-necklace.PNG",
+      "highlights": {
+        "colors": [
+          { "name": "Red", "meaning": "bravery, strength and unity (cow's blood)" },
+          { "name": "White", "meaning": "peace, purity and health (milk)" },
+          { "name": "Blue", "meaning": "energy, sky and rain" },
+          { "name": "Green", "meaning": "health, nourishment and grass" },
+          { "name": "Orange and yellow", "meaning": "hospitality and warmth" },
+          { "name": "Black", "meaning": "the people, shared identity and endurance" }
+        ],
+        "stages": [
+          { "name": "Unmarried girls", "detail": "wear a flat dancing disc" },
+          { "name": "Brides", "detail": "wear a heavy collar made by female relatives as a map of home" },
+          { "name": "Married women", "detail": "wear the Nborro blue-bead string" }
+        ]
+      }
     },
     {
       "index": 1,
@@ -31,7 +46,15 @@
       ],
       "folklore": "Oral history holds that when Enkai gave the Maasai their cattle, the acacia was given as a permanent guardian, a reminder that true strength grows in silence and stillness.",
       "verified": true,
-      "image": "/img/acacia-tree.PNG"
+      "image": "/img/acacia-tree.PNG",
+      "highlights": {
+        "roles": [
+          { "name": "Landmarks and meeting place", "detail": "Historic acacias served as landmarks and living archives where elders met." },
+          { "name": "Protection", "detail": "Thorny branches form the boma fence against predators, and termite-resistant timber is used for homes and grain stores." },
+          { "name": "Sustenance", "detail": "Protein-rich seed pods feed livestock in dry seasons; the red inner bark of Acacia xanthophloea was boiled as a traditional tea." },
+          { "name": "Medicine and ritual", "detail": "Olkiloriti (Acacia nilotica) bark and roots are boiled into broth or bone-marrow soup for Morans; sap treats wounds and twigs serve as natural toothbrushes." }
+        ]
+      }
     },
     {
       "index": 2,
@@ -47,7 +70,75 @@
       ],
       "folklore": "Through Olamayio the Maasai did not conquer the lion out of hatred; they absorbed its essence, and modern guardianship continues that bond as a living part of Maasai identity.",
       "verified": true,
-      "image": "/img/lion-image.PNG"
+      "image": "/img/lion-image.PNG",
+      "highlights": {
+        "timeline": [
+          { "name": "Olamayio", "detail": "A ritualised group hunt: warriors tracked on foot with a shield and a single spear, and hunting a lioness was forbidden unless she threatened livestock." },
+          { "name": "The first spear", "detail": "The warrior who landed the first spear blow earned a lifelong lion name and the lion's mane." },
+          { "name": "Enkuwaru", "detail": "The mane became the Enkuwaru headdress, worn at ceremonies to show bravery and ferocity." },
+          { "name": "Co-existence", "detail": "Lions learned to avoid Maasai territory and the red shuka; herders respond with strong bomas and vigilance." },
+          { "name": "Today", "detail": "The Maasai Olympics replace the hunt with javelin, Adumu jumping and running, and Lion Guardians use traditional tracking to protect lions, still giving them Maa names." }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "id": "shuka",
+      "title": "The Maasai Shuka",
+      "summary": "The Maasai Shuka—the iconic, vibrant fabric worn draped around the shoulders or wrapped at the waist—is the defining visual symbol of Maasai identity and resilience. Known as the \"African blanket,\" the Shuka is far more than just a piece of fabric; it is a shield against the elements, a proud badge of a pastoralist heritage, and a world-renowned cultural statement.",
+      "details": [
+        "Before the mid-19th century, the Maasai wore garments crafted entirely from animal skins (mostly cowhide and sheepskin) dyed with natural plant extracts and red ochre.",
+        "As international trade expanded across East Africa, the Maasai began adopting woven cotton fabrics brought by Arab, Indian, and European traders.",
+        "The Scottish Tartan Connection: During the British colonial era, Scottish missionaries and soldiers arrived in East Africa wearing traditional tartan kilts. The Maasai, drawn to the durability and bold patterns of the fabric, adapted the plaid designs into their own wardrobe.",
+        "The \"Merikani\" Evolution: American cotton cloth (known locally as Merikani) was imported into Zanzibar in the 19th century. Initially plain and un-dyed, local communities began dipping the cloth into indigo and black madder dyes. Over time, the Maasai favored bright red dyes, eventually leading to the vibrant factory-woven plaid patterns we see today.",
+        "The Color Red: Red symbolizes bravery, strength, and power. Crucially, the Maasai believe that wearing bright red deters wild animals—particularly lions—acting as a natural protective shield while herders graze cattle in the savanna.",
+        "Blue and Black Plaid: These darker tones represent the sky and the earth, grounding the wearer in their natural surroundings.",
+        "Geometric Squares: The intersecting lines create a sense of order and community structure, echoing the boundaries of their ancestral lands.",
+        "The Shuka is light enough to keep the body cool under the intense equatorial sun, yet thick enough to protect against chilly savanna winds, night dew, and sudden downpours.",
+        "It can be tied into a pouch to carry small items, used as a makeshift rope, or wrapped tightly to provide support during long treks.",
+        "High-end global fashion houses (such as Louis Vuitton) and local African designers regularly use the Shuka pattern in contemporary streetwear, outerwear, and accessories.",
+        "Even when traveling to modern cities like Nairobi or Dar es Salaam, Maasai individuals often wear their Shuka over modern clothes—a powerful visual declaration that they carry their rich heritage with them wherever they go."
+      ],
+      "folklore": "The history of the Shuka is a fascinating tale of global trade and cultural transformation.",
+      "verified": true,
+      "image": "/img/maasai-shuka.PNG",
+      "highlights": {
+        "colors": [
+          { "name": "Red", "meaning": "bravery, strength and power; believed to deter wild animals, especially lions" },
+          { "name": "Blue and black plaid", "meaning": "the sky and the earth, grounding the wearer in their natural surroundings" },
+          { "name": "Geometric squares", "meaning": "order and community structure, echoing the boundaries of their ancestral lands" }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "id": "manyatta",
+      "title": "The Maasai Manyatta (Enkang)",
+      "summary": "The Maasai Manyatta (traditionally called an enkang) is much more than just a home; it is the literal and spiritual blueprint of Maasai society, built entirely by women to protect their families and cattle.",
+      "details": [
+        "As a semi-nomadic pastoralist community living in East Africa, the Maasai designed the manyatta to harmonize with the savannah ecosystem, structuring it to reinforce communal bonds, age-set hierarchies, and survival in the wild.",
+        "A true enkang consists of a cluster of individual huts built in a large circle.",
+        "The Outer Ring: The entire village is enclosed by a thick, circular fence made of thorny acacia branches (osukuroi). This barrier is the first line of defense against lions, leopards, and rival raiders.",
+        "The Central Kraal: At the exact center of the circle lies the boo—the cattle pen. Cattle are the lifeblood of Maasai wealth and spirituality, and keeping them at the center ensures they are protected at night.",
+        "The Huts (Enkaji): The individual houses are loaf-shaped, low-slung structures. They are built using a framework of interwoven sticks and timber, which is then plastered with a mixture of mud, grass, ash, and cow dung. The cow dung creates a surprisingly durable, waterproof plaster that hardens in the sun and acts as a natural insulator, keeping the interior cool during blazing days and warm during chilly nights.",
+        "In Maasai culture, women are the sole architects and builders of the home. When a new village site is chosen based on water and grazing availability, the women set to work.",
+        "A woman constructs her own house, often assisted by her co-wives or friends. Because she builds it with her own hands, the home belongs entirely to her. A Maasai husband does not own a house; he is a respected guest who rotates between the huts of his wives.",
+        "The construction process is deeply communal, filled with singing and shared labor, passing engineering knowledge down from grandmothers to daughters.",
+        "The Internal Layout: Inside the tiny enkaji, there are no windows—only a small, bent entryway to block out predators and direct sunlight. The interior features a central hearth for cooking, sleeping mats made of cowhide, and a small cordoned-off section where fragile, newborn calves or lambs are kept during cold nights.",
+        "Social Hierarchy: The position of a hut within the circular manyatta is strictly dictated by a man's marriage order. The first wife's house is always built to the right of the main entrance gate, while the second wife's house is built to the left.",
+        "The Sacred Warrior Manyatta: While an enkang is a family village, the Maasai also construct a special type of temporary village known as a Moran Manyatta. This is a gated community built exclusively for young warriors (Morans) and their mothers during their years of training and military service. No fences are built around a warrior manyatta, symbolizing that the young men themselves are strong enough to protect the community without walls."
+      ],
+      "folklore": "The manyatta remains an enduring symbol of resilience, showcasing how a community can live in perfect equilibrium with nature while fiercely protecting their traditions.",
+      "verified": true,
+      "image": "/img/manyatta-home.PNG",
+      "highlights": {
+        "roles": [
+          { "name": "Outer ring", "detail": "a thick, circular fence made of thorny acacia branches (osukuroi)" },
+          { "name": "Central kraal", "detail": "the boo, the cattle pen at the exact center of the circle" },
+          { "name": "Huts (Enkaji)", "detail": "loaf-shaped homes of interwoven sticks and timber, plastered with mud, grass, ash, and cow dung" },
+          { "name": "Builders", "detail": "women are the sole architects and builders; the home belongs entirely to the woman who builds it" }
+        ]
+      }
     }
   ],
   "before": {

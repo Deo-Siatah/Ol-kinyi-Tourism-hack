@@ -1,0 +1,19 @@
+<svg class="cutaway-svg" viewBox="0 0 800 500" role="img" aria-label="Schematic cutaway of a homestead">
+  <g data-section="enclosure" class="visualize-part">
+    <ellipse cx="400" cy="430" rx="330" ry="52" fill="#e0c9a6"/>
+    <ellipse cx="400" cy="430" rx="330" ry="52" fill="none" stroke="#8a5a3b" stroke-width="8"/>
+  </g>
+  <g data-section="walls" class="visualize-part">
+    <path d="M250 220h300v170H250z" fill="#c8a06a" stroke="#8a5a3b" stroke-width="6"/>
+  </g>
+  <g data-section="interior" class="visualize-part">
+    <circle cx="400" cy="300" r="46" fill="#f3b95f"/>
+    <circle cx="400" cy="300" r="20" fill="#1e7a46"/>
+  </g>
+  <g data-section="entrance" class="visualize-part">
+    <path d="M360 390v-70a40 40 0 0 1 80 0v70z" fill="#0b3d2e" stroke="#7cc08f" stroke-width="6"/>
+  </g>
+  <g data-section="roof" class="visualize-part">
+    <path d="M210 226 400 70l190 156z" fill="#8a5a3b" stroke="#0b3d2e" stroke-width="6" stroke-linejoin="round"/>
+  </g>
+</svg>

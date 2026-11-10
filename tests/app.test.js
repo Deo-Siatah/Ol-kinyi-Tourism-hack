@@ -4,7 +4,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mountApp } from "../src/app.js";
 import { createTrip } from "../src/trip.js";
-import { storyFixture } from "./fixtures.js";
+import {
+  storyFixture,
+  visualizeFixture,
+  visualizeSvgFixture,
+} from "./fixtures.js";
 
 function fakeStorage() {
   const map = new Map();
@@ -14,7 +18,7 @@ function fakeStorage() {
   };
 }
 
-function setup({ storedIds = [] } = {}) {
+function setup({ storedIds = [], withVisualize = false } = {}) {
   document.body.innerHTML = '<div id="root"></div>';
   const root = document.getElementById("root");
   const stories = storyFixture();
@@ -32,8 +36,17 @@ function setup({ storedIds = [] } = {}) {
     play: vi.fn(async () => "speech"),
     stop: vi.fn(),
   };
-  const app = mountApp(root, { stories, trip, ask, narrator });
-  return { root, stories, trip, ask, narrator, app };
+  const visualize = withVisualize ? visualizeFixture() : undefined;
+  const visualizeSvg = withVisualize ? visualizeSvgFixture() : undefined;
+  const app = mountApp(root, {
+    stories,
+    trip,
+    ask,
+    narrator,
+    visualize,
+    visualizeSvg,
+  });
+  return { root, stories, trip, ask, narrator, visualize, app };
 }
 
 function flush() {
@@ -84,13 +97,14 @@ describe("mountApp screens", () => {
     expect(root.querySelector('[data-screen="explore"]').hidden).toBe(false);
   });
 
-  it("renders three tap-to-view targets with image thumbnails", () => {
+  it("renders five tap-to-view targets with image thumbnails", () => {
     const { root, stories } = setup();
     const buttons = root.querySelectorAll("[data-target]");
 
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(5);
     expect(buttons[0].getAttribute("data-target")).toBe("0");
     expect(buttons[0].querySelector("img").getAttribute("src")).toBe(stories.targets[0].image);
+    expect(buttons[4].getAttribute("data-target")).toBe("4");
   });
 });
 
@@ -131,7 +145,7 @@ describe("landing", () => {
     const { root } = setup();
     const previews = root.querySelectorAll("[data-preview-target]");
 
-    expect(previews).toHaveLength(3);
+    expect(previews).toHaveLength(5);
     expect(previews[0].textContent).toContain("Necklace");
     expect(previews[0].querySelector("img").getAttribute("src")).toBe(
       "/img/landing/beadwork.jpg",
@@ -139,6 +153,7 @@ describe("landing", () => {
     expect(previews[2].querySelector("img").getAttribute("src")).toBe(
       "/img/landing/lion.jpg",
     );
+    expect(previews[3].textContent).toContain("Shuka");
   });
 
   it("shows a continue CTA for a returning traveller", () => {
@@ -146,7 +161,7 @@ describe("landing", () => {
     const start = root.querySelector("[data-start]");
 
     expect(start.textContent).toContain("Continue your journey");
-    expect(start.textContent).toContain("2 of 3");
+    expect(start.textContent).toContain("2 of 5");
   });
 
   it("labels the three steps Discover, Scan and Reflect", () => {
@@ -175,6 +190,18 @@ describe("story sheet", () => {
     expect(sheet.textContent).toContain("Illustrative");
     expect(story.id).toBe("necklace");
     expect(trip.list()).toEqual(["necklace"]);
+  });
+
+  it("renders structured highlights in the reveal", () => {
+    const { root, app } = setup();
+
+    app.onTargetFound(0);
+
+    const highlights = root.querySelector("[data-sheet-highlights]");
+    expect(highlights).toBeTruthy();
+    expect(highlights.textContent).toContain("Bead colours");
+    expect(highlights.textContent).toContain("meaning one");
+    expect(highlights.textContent).toContain("stage detail");
   });
 
   it("returns null and keeps the sheet closed for an unknown index", () => {
@@ -279,7 +306,7 @@ describe("After screen", () => {
 
     root.querySelector('[data-tab="after"]').click();
     const after = root.querySelector('[data-screen="after"]');
-    expect(after.textContent).toContain("1 of 3 discovered");
+    expect(after.textContent).toContain("1 of 5 discovered");
     expect(after.textContent).toContain("Necklace");
   });
 
@@ -301,7 +328,7 @@ describe("camera error", () => {
     const error = root.querySelector("[data-camera-error]");
     expect(error.hidden).toBe(false);
     expect(error.textContent).toContain("Camera unavailable");
-    expect(root.querySelectorAll("[data-target]")).toHaveLength(3);
+    expect(root.querySelectorAll("[data-target]")).toHaveLength(5);
   });
 });
 
@@ -348,5 +375,119 @@ describe("story reveal", () => {
 
     expect(root.querySelector("[data-sheet]").hidden).toBe(true);
     expect(root.querySelector('[data-screen="explore"] [data-scan-guide]')).toBeTruthy();
+  });
+});
+
+describe("Visualize", () => {
+  it("adds no tab or screen when the content is absent", () => {
+    const { root, app } = setup();
+
+    expect(root.querySelector('[data-tab="visualize"]')).toBeNull();
+    expect(root.querySelector('[data-screen="visualize"]')).toBeNull();
+    expect(app.onTargetFound(4).id).toBe("manyatta");
+    expect(root.querySelector("[data-sheet]").hidden).toBe(false);
+    expect(root.querySelector('[data-screen="before"]').hidden).toBe(false);
+  });
+
+  it("adds a Visualize tab and screen when the content is present", () => {
+    const { root } = setup({ withVisualize: true });
+
+    expect(root.querySelector('[data-tab="visualize"]').textContent).toContain("Visualize");
+    expect(root.querySelector('[data-screen="visualize"]').hidden).toBe(true);
+  });
+
+  it("switches to the Visualize screen from its tab", () => {
+    const { root } = setup({ withVisualize: true });
+
+    root.querySelector('[data-tab="visualize"]').click();
+
+    expect(root.querySelector('[data-screen="visualize"]').hidden).toBe(false);
+    expect(root.querySelector('[data-tab="visualize"]').getAttribute("aria-selected")).toBe(
+      "true",
+    );
+  });
+
+  it("selects the first section on open", () => {
+    const { root } = setup({ withVisualize: true });
+
+    const panel = root.querySelector("[data-section-panel]");
+    expect(panel.textContent).toContain("PLACEHOLDER-roof");
+    expect(
+      root.querySelector('[data-section-chip="roof"]').classList.contains("is-active"),
+    ).toBe(true);
+    expect(
+      root.querySelector('[data-cutaway] [data-section="roof"]').classList.contains("is-active"),
+    ).toBe(true);
+  });
+
+  it("selects a section from a chip with a single active part", () => {
+    const { root } = setup({ withVisualize: true });
+
+    root.querySelector('[data-section-chip="walls"]').click();
+
+    expect(root.querySelector("[data-section-panel]").textContent).toContain("PLACEHOLDER-walls");
+    expect(root.querySelectorAll(".is-active")).toHaveLength(2);
+    expect(
+      root.querySelector('[data-section-chip="walls"]').classList.contains("is-active"),
+    ).toBe(true);
+    expect(
+      root.querySelector('[data-cutaway] [data-section="walls"]').classList.contains("is-active"),
+    ).toBe(true);
+  });
+
+  it("selects a section by tapping the drawing", () => {
+    const { root } = setup({ withVisualize: true });
+
+    root.querySelector('[data-cutaway] [data-section="entrance"]').dispatchEvent(
+      new Event("click", { bubbles: true }),
+    );
+
+    expect(root.querySelector("[data-section-panel]").textContent).toContain(
+      "PLACEHOLDER-entrance",
+    );
+  });
+
+  it("expands and collapses the cutaway", () => {
+    const { root } = setup({ withVisualize: true });
+    const expand = root.querySelector("[data-expand]");
+    const cutaway = root.querySelector("[data-cutaway]");
+
+    expect(expand.getAttribute("aria-pressed")).toBe("false");
+    expand.click();
+    expect(expand.getAttribute("aria-pressed")).toBe("true");
+    expect(cutaway.classList.contains("is-expanded")).toBe(true);
+    expand.click();
+    expect(expand.getAttribute("aria-pressed")).toBe("false");
+    expect(cutaway.classList.contains("is-expanded")).toBe(false);
+  });
+
+  it("shows Illustrative for unverified sections and hides it for verified ones", () => {
+    const { root, visualize } = setup({ withVisualize: true });
+    const badge = root.querySelector("[data-visualize-badge]");
+
+    expect(badge.hidden).toBe(false);
+    expect(badge.textContent).toContain("Illustrative");
+
+    visualize.sections[1].verified = true;
+    root.querySelector('[data-section-chip="walls"]').click();
+
+    expect(badge.hidden).toBe(true);
+  });
+
+  it("opens the shuka story when target 3 is found", () => {
+    const { root, app } = setup({ withVisualize: true });
+
+    const story = app.onTargetFound(3);
+
+    expect(story.id).toBe("shuka");
+    expect(root.querySelector("[data-sheet]").textContent).toContain("Shuka");
+  });
+
+  it("opens the Visualize screen when target 4 is found", () => {
+    const { root, app } = setup({ withVisualize: true });
+
+    app.onTargetFound(4);
+
+    expect(root.querySelector('[data-screen="visualize"]').hidden).toBe(false);
   });
 });

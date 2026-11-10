@@ -1,0 +1,42 @@
+{
+  "title": "The Maasai Manyatta",
+  "summary": "A semi-nomadic home built by women, designed to harmonize with the savannah and protect family and cattle.",
+  "verified": true,
+  "sections": [
+    {
+      "id": "roof",
+      "label": "Hut",
+      "title": "The Enkaji",
+      "text": "The individual houses are loaf-shaped, low-slung structures. They are built using a framework of interwoven sticks and timber, which is then plastered with a mixture of mud, grass, ash, and cow dung. The cow dung creates a surprisingly durable, waterproof plaster that hardens in the sun and acts as a natural insulator, keeping the interior cool during blazing days and warm during chilly nights.",
+      "verified": true
+    },
+    {
+      "id": "walls",
+      "label": "Builders",
+      "title": "Built by women",
+      "text": "In Maasai culture, women are the sole architects and builders of the home. When a new village site is chosen based on water and grazing availability, the women set to work. A woman constructs her own house, often assisted by her co-wives or friends. Because she builds it with her own hands, the home belongs entirely to her. A Maasai husband does not own a house; he is a respected guest who rotates between the huts of his wives. The construction process is deeply communal, filled with singing and shared labor, passing engineering knowledge down from grandmothers to daughters.",
+      "verified": true
+    },
+    {
+      "id": "entrance",
+      "label": "Entrance",
+      "title": "A small, bent entryway",
+      "text": "Inside the tiny enkaji, there are no windows—only a small, bent entryway to block out predators and direct sunlight. The position of a hut within the circular manyatta is strictly dictated by a man's marriage order: the first wife's house is always built to the right of the main entrance gate, while the second wife's house is built to the left.",
+      "verified": true
+    },
+    {
+      "id": "interior",
+      "label": "Interior",
+      "title": "Inside the Enkaji",
+      "text": "The interior features a central hearth for cooking, sleeping mats made of cowhide, and a small cordoned-off section where fragile, newborn calves or lambs are kept during cold nights.",
+      "verified": true
+    },
+    {
+      "id": "enclosure",
+      "label": "Enclosure",
+      "title": "The outer ring and the boo",
+      "text": "The entire village is enclosed by a thick, circular fence made of thorny acacia branches (osukuroi), the first line of defense against lions, leopards, and rival raiders. At the exact center of the circle lies the boo—the cattle pen. Cattle are the lifeblood of Maasai wealth and spirituality, and keeping them at the center ensures they are protected at night. A Moran Manyatta, by contrast, is a temporary village for young warriors and their mothers with no fences built around it, symbolizing that the young men themselves are strong enough to protect the community without walls.",
+      "verified": true
+    }
+  ]
+}

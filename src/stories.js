@@ -1,6 +1,13 @@
 // Validates and loads story data, and looks up targets by index.
 
-const ALLOWED_IDS = ["necklace", "plant", "animal"];
+const ALLOWED_IDS = ["necklace", "plant", "animal", "shuka", "manyatta"];
+
+const HIGHLIGHT_FIELDS = {
+  colors: ["name", "meaning"],
+  stages: ["name", "detail"],
+  roles: ["name", "detail"],
+  timeline: ["name", "detail"],
+};
 
 function fail(path, message) {
   throw new Error(`${path} ${message}`);
@@ -18,9 +25,37 @@ function requireStringArray(value, path) {
   }
 }
 
+function requireHighlightList(value, path, fields) {
+  if (!Array.isArray(value) || value.length === 0) {
+    fail(path, "must be a non-empty array");
+  }
+  value.forEach((item, i) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      fail(`${path}[${i}]`, "must be an object");
+    }
+    for (const field of fields) {
+      requireString(item[field], `${path}[${i}].${field}`);
+    }
+  });
+}
+
+function requireHighlights(value, path) {
+  if (value === undefined) {
+    return;
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(path, "must be an object");
+  }
+  for (const [group, fields] of Object.entries(HIGHLIGHT_FIELDS)) {
+    if (value[group] !== undefined) {
+      requireHighlightList(value[group], `${path}.${group}`, fields);
+    }
+  }
+}
+
 export function validateStories(data) {
-  if (!data || !Array.isArray(data.targets) || data.targets.length !== 3) {
-    fail("targets", "must be an array of 3 targets");
+  if (!data || !Array.isArray(data.targets) || data.targets.length !== 5) {
+    fail("targets", "must be an array of 5 targets");
   }
 
   data.targets.forEach((target, i) => {
@@ -39,6 +74,7 @@ export function validateStories(data) {
       fail(`${base}.verified`, "must be a boolean");
     }
     requireString(target.image, `${base}.image`);
+    requireHighlights(target.highlights, `${base}.highlights`);
   });
 
   if (!data.before || typeof data.before !== "object") {

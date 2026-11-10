@@ -2,7 +2,7 @@
 
 import { buildPrecacheList, cacheFirst } from "./src/offline.js";
 
-const CACHE_NAME = "olkinyi-v3";
+const CACHE_NAME = "olkinyi-v6";
 
 const VENDOR_FILES = [
   "/vendor/mindar-image-three.prod.js",
@@ -24,6 +24,7 @@ const VENDOR_FILES = [
 const APP_FILES = [
   "/src/app.js",
   "/src/ask.js",
+  "/src/highlights.js",
   "/src/icons.js",
   "/src/offline.js",
   "/src/overlay.js",
@@ -31,6 +32,7 @@ const APP_FILES = [
   "/src/speech.js",
   "/src/stories.js",
   "/src/trip.js",
+  "/src/visualize.js",
 ];
 
 async function precacheUrls() {

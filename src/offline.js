@@ -6,6 +6,8 @@ const CORE_FILES = [
   "/manifest.json",
   "/targets.mind",
   "/content/stories.json",
+  "/content/visualize.json",
+  "/content/visualize.svg",
   "/src/main.js",
   "/src/narrate.js",
   "/src/speech.js",

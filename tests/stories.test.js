@@ -40,6 +40,26 @@ function validData() {
         verified: false,
         image: "img/animal.jpg",
       },
+      {
+        index: 3,
+        id: "shuka",
+        title: "title",
+        summary: "summary",
+        details: ["detail"],
+        folklore: "folklore",
+        verified: true,
+        image: "img/shuka.jpg",
+      },
+      {
+        index: 4,
+        id: "manyatta",
+        title: "title",
+        summary: "summary",
+        details: ["detail"],
+        folklore: "folklore",
+        verified: true,
+        image: "img/manyatta.jpg",
+      },
     ],
     before: {
       greetings: [{ maa: "maa", english: "english" }],
@@ -93,6 +113,31 @@ describe("validateStories", () => {
   it("accepts targets without an audio path", () => {
     const data = validData();
     expect(validateStories(data)).toBe(data);
+  });
+
+  it("accepts structured highlights", () => {
+    const data = validData();
+    data.targets[0].highlights = {
+      colors: [{ name: "Red", meaning: "meaning" }],
+      stages: [{ name: "Brides", detail: "detail" }],
+    };
+    expect(validateStories(data)).toBe(data);
+  });
+
+  it("throws naming targets[0].highlights.colors[1].meaning when meaning is missing", () => {
+    const data = validData();
+    data.targets[0].highlights = {
+      colors: [{ name: "Red", meaning: "meaning" }, { name: "Blue" }],
+    };
+    expect(() => validateStories(data)).toThrow(
+      /targets\[0\]\.highlights\.colors\[1\]\.meaning/,
+    );
+  });
+
+  it("throws naming targets[2].highlights.timeline when timeline is not an array", () => {
+    const data = validData();
+    data.targets[2].highlights = { timeline: "not an array" };
+    expect(() => validateStories(data)).toThrow(/targets\[2\]\.highlights\.timeline/);
   });
 
   it("throws naming before.greetings when greetings is missing", () => {
